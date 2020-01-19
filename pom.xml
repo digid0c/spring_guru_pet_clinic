@@ -14,7 +14,7 @@
     </parent>
     <groupId>guru.samples</groupId>
     <artifactId>petclinic</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
     <name>petclinic</name>
     <description>Demo project for Spring Boot</description>
 
@@ -44,7 +44,7 @@
 
     <scm>
         <developerConnection>scm:git:https://github.com/digid0c/spring_guru_pet_clinic.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>petclinic-0.0.2</tag>
     </scm>
 
     <repositories>
