@@ -4,6 +4,7 @@ import guru.samples.petclinic.model.Visit;
 import guru.samples.petclinic.repository.VisitRepository;
 import guru.samples.petclinic.service.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
+@Profile("jpa")
 public class VisitJpaService implements VisitService {
 
     private final VisitRepository visitRepository;

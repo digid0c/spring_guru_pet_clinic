@@ -4,6 +4,7 @@ import guru.samples.petclinic.model.PetType;
 import guru.samples.petclinic.repository.PetTypeRepository;
 import guru.samples.petclinic.service.PetTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
+@Profile("jpa")
 public class PetTypeJpaService implements PetTypeService {
 
     private final PetTypeRepository petTypeRepository;
