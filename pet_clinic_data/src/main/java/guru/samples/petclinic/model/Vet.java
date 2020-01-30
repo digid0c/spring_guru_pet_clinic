@@ -1,9 +1,17 @@
 package guru.samples.petclinic.model;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "vet")
 public class Vet extends Person {
@@ -12,11 +20,13 @@ public class Vet extends Person {
     @JoinTable(name = "vet_speciality", joinColumns = @JoinColumn(name = "vet_id"), inverseJoinColumns = @JoinColumn(name = "speciality_id"))
     private Set<Speciality> specialities = new HashSet<>();
 
-    public Set<Speciality> getSpecialities() {
-        return specialities;
+    @Builder
+    public Vet(Long id, String firstName, String lastName) {
+        super(id, firstName, lastName);
     }
 
-    public void setSpecialities(Set<Speciality> specialities) {
-        this.specialities = specialities;
+    public Vet addSpeciality(Speciality speciality) {
+        this.specialities.add(speciality);
+        return this;
     }
 }
