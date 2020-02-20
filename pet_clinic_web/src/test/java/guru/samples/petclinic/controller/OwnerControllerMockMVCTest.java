@@ -12,16 +12,19 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.hasSize;
+import static java.util.stream.Collectors.toSet;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 public class OwnerControllerMockMVCTest {
+
+    private static final Long FIRST_OWNER_ID = 1L;
+    private static final Long SECOND_OWNER_ID = 2L;
 
     @Mock
     private OwnerService ownerService;
@@ -34,9 +37,9 @@ public class OwnerControllerMockMVCTest {
 
     @BeforeEach
     public void setUp() {
-        Owner owner1 = Owner.builder().id(1L).build();
-        Owner owner2 = Owner.builder().id(2L).build();
-        owners = Stream.of(owner1, owner2).collect(Collectors.toSet());
+        Owner owner1 = Owner.builder().id(FIRST_OWNER_ID).build();
+        Owner owner2 = Owner.builder().id(SECOND_OWNER_ID).build();
+        owners = Stream.of(owner1, owner2).collect(toSet());
 
         mockMvc = MockMvcBuilders.standaloneSetup(tested).build();
     }
@@ -60,5 +63,21 @@ public class OwnerControllerMockMVCTest {
                 .andExpect(view().name("not-implemented"));
 
         verifyNoInteractions(ownerService);
+    }
+
+    @Test
+    public void shouldGetOwner() throws Exception {
+        Owner owner = Owner.builder()
+                .id(FIRST_OWNER_ID)
+                .build();
+        when(ownerService.findById(FIRST_OWNER_ID)).thenReturn(owner);
+
+        mockMvc.perform(get("/owners/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("owners/ownerDetails"))
+                .andExpect(model().attributeExists("owner"))
+                .andExpect(model().attribute("owner", hasProperty("id", is(FIRST_OWNER_ID))));
+
+        verify(ownerService).findById(FIRST_OWNER_ID);
     }
 }
