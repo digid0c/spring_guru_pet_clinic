@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -31,6 +32,11 @@ public class OwnerJpaService implements OwnerService {
     public Set<Owner> findAll() {
         return StreamSupport.stream(ownerRepository.findAll().spliterator(), false)
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public List<Owner> findAllByLastNameLike(String lastName) {
+        return ownerRepository.findAllByLastNameLike(lastName);
     }
 
     @Override
