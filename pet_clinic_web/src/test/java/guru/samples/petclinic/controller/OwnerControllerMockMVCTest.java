@@ -18,8 +18,10 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,6 +29,7 @@ public class OwnerControllerMockMVCTest {
 
     private static final Long FIRST_OWNER_ID = 1L;
     private static final Long SECOND_OWNER_ID = 2L;
+    private static final String OWNER_CREATE_OR_UPDATE_FORM = "owners/createOrUpdateOwnerForm";
 
     @Mock
     private OwnerService ownerService;
@@ -95,7 +98,7 @@ public class OwnerControllerMockMVCTest {
     }
 
     @Test
-    public void shouldNotFindAnyOwners() throws Exception {
+    public void shouldNotListAnyOwners() throws Exception {
         when(ownerService.findAllByLastNameLike(anyString())).thenReturn(emptyList());
 
         mockMvc.perform(get("/owners"))
@@ -103,5 +106,52 @@ public class OwnerControllerMockMVCTest {
                 .andExpect(view().name("owners/findOwners"));
 
         verify(ownerService).findAllByLastNameLike(anyString());
+    }
+
+    @Test
+    public void shouldGetCreateOwnerForm() throws Exception {
+        mockMvc.perform(get("/owners/new"))
+                .andExpect(status().isOk())
+                .andExpect(view().name(OWNER_CREATE_OR_UPDATE_FORM))
+                .andExpect(model().attributeExists("owner"));
+
+        verifyNoInteractions(ownerService);
+    }
+
+    @Test
+    public void shouldCreateOwner() throws Exception {
+        when(ownerService.save(any())).thenReturn(owner);
+
+        mockMvc.perform(post("/owners/new"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/owners/1"))
+                .andExpect(header().string("Location", "/owners/1"));
+
+        verify(ownerService).save(any());
+    }
+
+    @Test
+    public void shouldGetUpdateOwnerForm() throws Exception {
+        when(ownerService.findById(FIRST_OWNER_ID)).thenReturn(owner);
+
+        mockMvc.perform(get("/owners/1/edit"))
+                .andExpect(status().isOk())
+                .andExpect(view().name(OWNER_CREATE_OR_UPDATE_FORM))
+                .andExpect(model().attributeExists("owner"))
+                .andExpect(model().attribute("owner", hasProperty("id", is(FIRST_OWNER_ID))));
+
+        verify(ownerService).findById(FIRST_OWNER_ID);
+    }
+
+    @Test
+    public void shouldUpdateOwner() throws Exception {
+        when(ownerService.save(any())).thenReturn(owner);
+
+        mockMvc.perform(post("/owners/1/edit"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/owners/1"))
+                .andExpect(header().string("Location", "/owners/1"));
+
+        verify(ownerService).save(any());
     }
 }
