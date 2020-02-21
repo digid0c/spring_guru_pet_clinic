@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Getter
@@ -40,5 +41,12 @@ public class Owner extends Person {
         pet.setOwner(this);
         this.pets.add(pet);
         return this;
+    }
+
+    public Optional<Pet> getPet(String petName) {
+        return this.pets.stream()
+                .filter(pet -> !pet.isNew())
+                .filter(pet -> pet.getName().equalsIgnoreCase(petName))
+                .findFirst();
     }
 }
